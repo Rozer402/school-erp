@@ -62,7 +62,8 @@ const columns: ColumnDef<LibraryRow>[] = [
 ];
 
 export default async function LibraryPage() {
-  const libraryData: LibraryRow[] = await apiFetchServer("/api/library");
+  const libraryData: LibraryRow[] =
+    (await apiFetchServer("/api/library")) ?? [];
 
   return (
     <div className="space-y-8 pb-12">

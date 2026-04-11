@@ -12,12 +12,6 @@ import type { User } from "@/types/auth";
  *   return <AuthProvider user={user}>...</AuthProvider>
  */
 export async function getServerUser(): Promise<User | null> {
-  try {
-    const data = await apiFetchServer("/api/auth/me");
-    return data?.user || null;
-  } catch (error) {
-    // apiFetchServer.throws on 401 → redirects to /login
-    // If we reach here, it's a network error — return null (logged out)
-    return null;
-  }
+  const data = await apiFetchServer("/api/auth/me");
+  return data?.user || null;
 }

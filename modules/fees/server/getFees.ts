@@ -67,17 +67,14 @@ export async function getFees(filters?: FeeFilters): Promise<FeeAssignment[]> {
  * - Handles auth redirects via apiFetchServer
  */
 export async function getStudentFees(): Promise<FeeAssignment[]> {
-  try {
-    const raw: ApiFeesResponse = await apiFetchServer("/api/fees/me");
+  const raw: ApiFeesResponse | null = await apiFetchServer("/api/fees/me");
+  const rawAssignments = raw?.assignments ?? [];
 
-    const assignments: FeeAssignment[] = raw.assignments.map((a) =>
-      normalizeFeeAssignment(a),
-    );
-
-    return assignments;
-  } catch (error) {
-    throw error;
+  if (!Array.isArray(rawAssignments)) {
+    return [];
   }
+
+  return rawAssignments.map((a: any) => normalizeFeeAssignment(a));
 }
 
 /**
@@ -88,13 +85,12 @@ export async function getStudentFees(): Promise<FeeAssignment[]> {
  */
 export async function getFeeDetails(
   assignmentId: string,
-): Promise<FeeAssignment> {
-  try {
-    const raw = await apiFetchServer(`/api/fees/${assignmentId}`);
-    return normalizeFeeAssignment(raw);
-  } catch (error) {
-    throw error;
+): Promise<FeeAssignment | null> {
+  const raw = await apiFetchServer(`/api/fees/${assignmentId}`);
+  if (!raw) {
+    return null;
   }
+  return normalizeFeeAssignment(raw);
 }
 
 /**

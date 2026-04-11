@@ -53,9 +53,8 @@ const columns: ColumnDef<LeaveRow>[] = [
 ];
 
 export default async function LeavePage() {
-  const leaveData: LeaveRow[] = await apiFetchServer("/api/leave");
+  const leaveData: LeaveRow[] = (await apiFetchServer("/api/leave")) ?? [];
 
-  // Summary counters derived on the server — no client JS needed
   const approved = leaveData.filter((l) => l.status === "Approved").length;
   const pending = leaveData.filter((l) => l.status === "Pending").length;
   const rejected = leaveData.filter((l) => l.status === "Rejected").length;
@@ -82,7 +81,12 @@ export default async function LeavePage() {
       {/* Stats Strip */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Total Days", value: totalDays, colour: "indigo", icon: CalendarX },
+          {
+            label: "Total Days",
+            value: totalDays,
+            colour: "indigo",
+            icon: CalendarX,
+          },
           { label: "Approved", value: approved, colour: "emerald", icon: null },
           { label: "Pending", value: pending, colour: "amber", icon: null },
           { label: "Rejected", value: rejected, colour: "rose", icon: null },
@@ -91,10 +95,14 @@ export default async function LeavePage() {
             key={label}
             className={`bg-${colour}-50 dark:bg-${colour}-950/20 p-5 rounded-[2rem] border border-${colour}-100 dark:border-${colour}-800/20 space-y-2`}
           >
-            <p className={`text-[10px] font-black uppercase tracking-widest text-${colour}-600 dark:text-${colour}-400`}>
+            <p
+              className={`text-[10px] font-black uppercase tracking-widest text-${colour}-600 dark:text-${colour}-400`}
+            >
               {label}
             </p>
-            <p className={`text-3xl font-black italic tracking-tighter text-${colour}-700 dark:text-${colour}-300`}>
+            <p
+              className={`text-3xl font-black italic tracking-tighter text-${colour}-700 dark:text-${colour}-300`}
+            >
               {value}
             </p>
           </div>
