@@ -30,3 +30,39 @@ export const subjectAttendance = [
   { id: "CS303", name: "Computer Networks", totalClasses: 42, attended: 40, percentage: 95.2 },
   { id: "CS304", name: "Operating Systems", totalClasses: 40, attended: 32, percentage: 80.0 },
 ];
+
+export const mockUser = {
+  id: "1",
+  name: "Arjun Mehta",
+  role: "student",
+};
+
+export const mockFees = [
+  {
+    id: "F001",
+    amount: 5000,
+    status: "PAID",
+    date: "2026-04-01",
+  },
+];
+
+export const mockAttendance = {
+  percentage: 85.2,
+};
+
+export const mockDashboard = {
+  stats: [
+    { value: "1,200", trend: "+5%", progress: 85 },
+    { value: "45", trend: "+2", progress: 60 },
+    { value: "15", trend: "-3", progress: 90 },
+    { value: "$12,000", trend: "+10%", progress: 75 },
+    { value: "98%", trend: "+1%", progress: 98 }
+  ],
+  bulletins: [
+    { id: "1", type: "IMPORTANT", date: "2026-05-10 10:00", title: "Semester Exams announced" },
+    { id: "2", type: "HOLIDAY", date: "2026-04-20 00:00", title: "Spring Break" },
+    { id: "3", type: "EXAM", date: "2026-06-01 09:00", title: "Finals" }
+  ]
+};
+
+export const mockNotices = mockDashboard.bulletins;

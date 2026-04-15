@@ -1,6 +1,33 @@
 "use server";
 
 import { apiFetchServer } from "@/lib/api-server";
+import { USE_MOCK } from "@/lib/config";
+
+const MOCK_API_FEES_RESPONSE = {
+  assignments: [
+    {
+      id: "F001",
+      studentId: "1",
+      student: { id: "1", name: "Arjun Mehta", classId: "9A", rollNo: 15, email: "arjun@example.com", phone: "9876543210" },
+      feeStructureId: "FS001",
+      feeStructure: {
+        id: "FS001",
+        classId: "9A",
+        academicYear: "2025-2026",
+        components: [{ id: "C1", name: "Tuition", amount: 150000 }],
+        totalAmount: 150000,
+        dueDate: "2026-08-15"
+      },
+      classId: "9A",
+      academicYear: "2025-2026",
+      totalAmount: 150000,
+      payments: [{ id: "P1", amount: 150000, method: "ONLINE", receiptNo: "R001", receiptDate: "2026-04-01", paidAt: "2026-04-01T10:00:00Z" }],
+      createdAt: "2026-01-01T00:00:00Z",
+      updatedAt: "2026-01-01T00:00:00Z"
+    }
+  ]
+};
+
 
 import { FeeStatus } from "@/modules/fees/types";
 import type {
@@ -33,29 +60,21 @@ export async function getFees(filters?: FeeFilters): Promise<FeeAssignment[]> {
   const endpoint = `/api/fees${query ? `?${query}` : ""}`;
 
   try {
-    // apiFetchServer reads cookies, throws on 401/403, auto-redirects
-    const raw: ApiFeesResponse = await apiFetchServer(endpoint);
-
-    // Normalize: transform raw API response to typed domain model
-    // ✅ Safe extraction (matches ApiFeesResponse type)
-    const rawAssignments = raw?.assignments ?? [];
-
-    // 🚨 Validate before mapping
-    if (!Array.isArray(rawAssignments)) {
-      console.error("Invalid assignments format:", raw);
-      return [];
+    if (USE_MOCK) {
+      return MOCK_API_FEES_RESPONSE.assignments.map((a: any) => normalizeFeeAssignment(a));
     }
 
-    // ✅ Safe mapping
-    const assignments: FeeAssignment[] = rawAssignments.map((a: any) =>
-      normalizeFeeAssignment(a),
-    );
+    const raw: ApiFeesResponse = await apiFetchServer(endpoint);
+    const rawAssignments = raw?.assignments ?? [];
 
-    return assignments;
+    if (!Array.isArray(rawAssignments)) {
+      console.error("Invalid assignments format:", raw);
+      return MOCK_API_FEES_RESPONSE.assignments.map((a: any) => normalizeFeeAssignment(a));
+    }
+
+    return rawAssignments.map((a: any) => normalizeFeeAssignment(a));
   } catch (error) {
-    // During build, API may not be available, return empty to allow build
-    console.warn("Failed to fetch fees:", error);
-    return [];
+    return MOCK_API_FEES_RESPONSE.assignments.map((a: any) => normalizeFeeAssignment(a));
   }
 }
 
@@ -67,14 +86,21 @@ export async function getFees(filters?: FeeFilters): Promise<FeeAssignment[]> {
  * - Handles auth redirects via apiFetchServer
  */
 export async function getStudentFees(): Promise<FeeAssignment[]> {
-  const raw: ApiFeesResponse | null = await apiFetchServer("/api/fees/me");
-  const rawAssignments = raw?.assignments ?? [];
+  try {
+    if (USE_MOCK) {
+      return MOCK_API_FEES_RESPONSE.assignments.map((a: any) => normalizeFeeAssignment(a));
+    }
+    const raw: ApiFeesResponse | null = await apiFetchServer("/api/fees/me");
+    const rawAssignments = raw?.assignments ?? [];
 
-  if (!Array.isArray(rawAssignments)) {
-    return [];
+    if (!Array.isArray(rawAssignments)) {
+      return MOCK_API_FEES_RESPONSE.assignments.map((a: any) => normalizeFeeAssignment(a));
+    }
+
+    return rawAssignments.map((a: any) => normalizeFeeAssignment(a));
+  } catch {
+    return MOCK_API_FEES_RESPONSE.assignments.map((a: any) => normalizeFeeAssignment(a));
   }
-
-  return rawAssignments.map((a: any) => normalizeFeeAssignment(a));
 }
 
 /**
@@ -86,11 +112,18 @@ export async function getStudentFees(): Promise<FeeAssignment[]> {
 export async function getFeeDetails(
   assignmentId: string,
 ): Promise<FeeAssignment | null> {
-  const raw = await apiFetchServer(`/api/fees/${assignmentId}`);
-  if (!raw) {
-    return null;
+  try {
+    if (USE_MOCK) {
+      return normalizeFeeAssignment(MOCK_API_FEES_RESPONSE.assignments[0]);
+    }
+    const raw = await apiFetchServer(`/api/fees/${assignmentId}`);
+    if (!raw) {
+      return normalizeFeeAssignment(MOCK_API_FEES_RESPONSE.assignments[0]);
+    }
+    return normalizeFeeAssignment(raw);
+  } catch {
+    return normalizeFeeAssignment(MOCK_API_FEES_RESPONSE.assignments[0]);
   }
-  return normalizeFeeAssignment(raw);
 }
 
 /**

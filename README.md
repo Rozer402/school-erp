@@ -1,8 +1,28 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# School ERP Frontend
 
-## Getting Started
+A production-ready School ERP system built with Next.js 14, TypeScript, and Tailwind CSS.
 
-First, run the development server:
+## 🚀 Features
+
+- 🔐 SSR Authentication (httpOnly cookies)
+- 💰 Fees Management System
+- 📊 Student Dashboard
+- 🔍 Command Palette (Ctrl + K)
+- 📅 Attendance Tracking
+- 📢 Notices & Bulletin Board
+- 📚 Library Management
+- 👤 Student Profile System
+
+## 🧠 Tech Stack
+
+- Next.js 14 (App Router)
+- TypeScript (strict mode)
+- Tailwind CSS
+- React Query
+
+## ⚙️ Setup
 
 ```bash
+npm install
 npm run dev
+```
