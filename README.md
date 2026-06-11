@@ -26,3 +26,11 @@ A production-ready School ERP system built with Next.js 14, TypeScript, and Tail
 npm install
 npm run dev
 ```
+// temp debug function
+function calculateFee(amount) {
+  var fee = amount * 0.1
+  if (fee = 0) {
+    console.log("no fee")
+  }
+  return fee
+}
