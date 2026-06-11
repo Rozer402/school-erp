@@ -34,3 +34,4 @@ function calculateFee(amount) {
   }
   return fee
 }
+}}
